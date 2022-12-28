@@ -1,21 +1,18 @@
-let position = [
-    ["r", "n", "b", "q", "k", "b", "n", "r"],
-    ["p", "p", "p", "p", "p", "p", "p", "p"],
-    ["", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", ""],
-    ["", "", "", "", "", "", "", ""],
-    ["P", "P", "P", "P", "P", "P", "P", "P"],
-    ["R", "N", "B", "Q", "K", "B", "N", "R"]
-]
+const chess = new Chess()
+
+// let position = [
+//     ["r", "n", "b", "q", "k", "b", "n", "r"],
+//     ["p", "p", "p", "p", "p", "p", "p", "p"],
+//     ["", "", "", "", "", "", "", ""],
+//     ["", "", "", "", "", "", "", ""],
+//     ["", "", "", "", "", "", "", ""],
+//     ["", "", "", "", "", "", "", ""],
+//     ["P", "P", "P", "P", "P", "P", "P", "P"],
+//     ["R", "N", "B", "Q", "K", "B", "N", "R"]
+// ]
 
 row = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 column = ['8', '7', '6', '5', '4', '3', '2', '1']
-
-const game = new Chess()
-
-game.move('e4')
-console.log(game.ascii())
 
 function createPiece(elem, id, img_path) {
     var img = document.createElement("img");
@@ -28,21 +25,28 @@ function createPiece(elem, id, img_path) {
 }
 
 function move(from, to) {
+    piece = null
     var tile1 = document.getElementById(from); 
     var tile2 = document.getElementById(to);
-
-    piece = null
     let has_piece = tile1.hasChildNodes()
     let has_piece2 = tile2.hasChildNodes()
-    
-    if (has_piece) {
-        if (has_piece2) {
-            tile2.removeChild(tile2.firstChild);
-        }
 
-        piece = tile1.firstChild
-        tile1.removeChild(piece);
-        tile2.appendChild(piece);
+    var is_legal = chess.move({ from: from, to: to })
+    if (is_legal !== null) {
+        console.log('from '+from+'; to '+to);
+        console.log(chess.ascii())
+        if (has_piece) {
+            if (has_piece2) {
+                tile2.removeChild(tile2.firstChild);
+            }
+    
+            piece = tile1.firstChild
+            tile1.removeChild(piece);
+            tile2.appendChild(piece);
+        }
+    } else {
+        console.log("is illegal")
+        console.log(chess.ascii())
     }
 }
 
@@ -142,13 +146,12 @@ for (let i = 0; i < 8; i++) {
             div.style.border = "2px solid black";
             if (count === 1) {
                 from = div.id;
-                console.log('from: '+from);
+                // console.log('from: '+from);
                 count = count + 1;
             } else {
                 to = div.id;
-                console.log('to: '+to);
+                // console.log('to: '+to);
                 count = 1
-
                 move(from, to);
             }
         });
@@ -160,3 +163,5 @@ for (let i = 0; i < 8; i++) {
         
     }
 }
+
+console.log(chess.ascii())
