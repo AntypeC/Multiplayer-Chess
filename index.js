@@ -1,5 +1,5 @@
 const express = require("express");
-const chess = require("chess.js");
+// const chess = require("chess.js");
 
 const app = express();
 app.use(express.static('./'))
@@ -14,11 +14,11 @@ app.listen(PORT, () => {
     console.log(`Server is running on PORT: ${PORT}`);
 });
 
-const game = new chess.Chess()
+// const game = new chess.Chess()
 
-const move1 = game.move('e5')
-game.move('e5')
+// const move1 = game.move('e5')
+// game.move('e5')
 
-console.log(move1);
+// console.log(move1);
 
-console.log(game.ascii())
+// console.log(game.ascii())

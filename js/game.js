@@ -9,26 +9,54 @@ let position = [
     ["R", "N", "B", "Q", "K", "B", "N", "R"]
 ]
 
+row = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+column = ['8', '7', '6', '5', '4', '3', '2', '1']
+
+const game = new Chess()
+
+game.move('e4')
+console.log(game.ascii())
+
 function createPiece(elem, id, img_path) {
     var img = document.createElement("img");
     img.src = img_path;
     img.setAttribute("id", id)
+
     img.style.height = "80px";
     img.style.width = "80px";
     elem.appendChild(img)
 }
 
-function move(elem) {
-    // div.getElementByID().style.border = "thick solid #0000FF";
+function move(from, to) {
+    var tile1 = document.getElementById(from); 
+    var tile2 = document.getElementById(to);
 
+    piece = null
+    let has_piece = tile1.hasChildNodes()
+    let has_piece2 = tile2.hasChildNodes()
+    
+    if (has_piece) {
+        if (has_piece2) {
+            tile2.removeChild(tile2.firstChild);
+        }
+
+        piece = tile1.firstChild
+        tile1.removeChild(piece);
+        tile2.appendChild(piece);
+    }
 }
 
+let count = 1
+let from = ''
+let to = ''
 
 for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
         const div = document.createElement("div");
 
-        div.setAttribute("id", (i).toString()+(j).toString());
+        // div.setAttribute("id", (i).toString()+(j).toString());
+        div.setAttribute("id", row.at(j)+column.at(i))
+        div.setAttribute("tabindex", "0")
 
         let color = "#66433A"
         if (i % 2 === 0) {
@@ -41,13 +69,6 @@ for (let i = 0; i < 8; i++) {
             }
         }
 
-        div.addEventListener("focus", function() {
-            div.style.border = "1px solid black";
-        });
-        div.addEventListener("blur", function() {
-            div.style.border = "0px";
-        });
-        
         div.style.height = "80px";
         div.style.width = "80px";
         div.style.backgroundColor = color;
@@ -116,6 +137,25 @@ for (let i = 0; i < 8; i++) {
                 createPiece(div, "R", 'images/Chess_rlt60.png')
             }
         }
+
+        div.addEventListener("focus", function() {
+            div.style.border = "2px solid black";
+            if (count === 1) {
+                from = div.id;
+                console.log('from: '+from);
+                count = count + 1;
+            } else {
+                to = div.id;
+                console.log('to: '+to);
+                count = 1
+
+                move(from, to);
+            }
+        });
+        div.addEventListener("blur", function() {
+            div.style.border = "0px";
+        });
+
         document.body.appendChild(div);
         
     }
