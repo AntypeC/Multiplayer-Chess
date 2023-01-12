@@ -1,24 +1,58 @@
-const express = require("express");
-// const chess = require("chess.js");
+var express = require('express');
+var app = express();
+const path = require('path');
 
-const app = express();
 app.use(express.static('./'))
+var expressWs = require('express-ws')(app);
+var players = []
 
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, '/index.html'));
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname+ '/index.html'));
 });
 
-const PORT = 3000;
+app.ws('/ws', function(ws) {
+  players.push(ws)
+  ws.on('message', function(msg) {
+    players.forEach((websocket) => {
+      if (websocket != ws) {
+        websocket.send(msg)
+      }
+    })
+  });
+  ws.on("close", () => {
+    if (players.indexOf(ws) > -1) { 
+      players.splice(players.indexOf(ws), 1); 
+    }
+  })
+});
+
+// function move(from, to) {
+//   piece = null
+//   var tile1 = document.getElementById(from); 
+//   var tile2 = document.getElementById(to);
+//   let has_piece = tile1.hasChildNodes()
+//   let has_piece2 = tile2.hasChildNodes()
+
+//   var is_legal = chess.move({ from: from, to: to })
+//   if (is_legal !== null) {
+//       console.log('from '+from+'; to '+to);
+//       console.log(chess.ascii())
+//       if (has_piece) {
+//           if (has_piece2) {
+//               tile2.removeChild(tile2.firstChild);
+//           }
+  
+//           piece = tile1.firstChild
+//           tile1.removeChild(piece);
+//           tile2.appendChild(piece);
+//       }
+//   } else {
+//       console.log("is illegal")
+//       console.log(chess.ascii())
+//   }
+// }
+const PORT = 8080;
 
 app.listen(PORT, () => {
-    console.log(`Server is running on PORT: ${PORT}`);
+   console.log(`Server is running on PORT: ${PORT}`);
 });
-
-// const game = new chess.Chess()
-
-// const move1 = game.move('e5')
-// game.move('e5')
-
-// console.log(move1);
-
-// console.log(game.ascii())

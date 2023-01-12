@@ -1,4 +1,4 @@
-const chess = new Chess()
+const socket = new WebSocket('ws://localhost:3000/ws');
 
 // let position = [
 //     ["r", "n", "b", "q", "k", "b", "n", "r"],
@@ -24,33 +24,7 @@ function createPiece(elem, id, img_path) {
     elem.appendChild(img)
 }
 
-function move(from, to) {
-    piece = null
-    var tile1 = document.getElementById(from); 
-    var tile2 = document.getElementById(to);
-    let has_piece = tile1.hasChildNodes()
-    let has_piece2 = tile2.hasChildNodes()
-
-    var is_legal = chess.move({ from: from, to: to })
-    if (is_legal !== null) {
-        console.log('from '+from+'; to '+to);
-        console.log(chess.ascii())
-        if (has_piece) {
-            if (has_piece2) {
-                tile2.removeChild(tile2.firstChild);
-            }
-    
-            piece = tile1.firstChild
-            tile1.removeChild(piece);
-            tile2.appendChild(piece);
-        }
-    } else {
-        console.log("is illegal")
-        console.log(chess.ascii())
-    }
-}
-
-let count = 1
+let step = false
 let from = ''
 let to = ''
 
@@ -144,15 +118,15 @@ for (let i = 0; i < 8; i++) {
 
         div.addEventListener("focus", function() {
             div.style.border = "2px solid black";
-            if (count === 1) {
+            if (step == false) {
                 from = div.id;
                 // console.log('from: '+from);
-                count = count + 1;
+                step = true;
             } else {
                 to = div.id;
                 // console.log('to: '+to);
-                count = 1
-                move(from, to);
+                step = false
+                // move(from, to);
             }
         });
         div.addEventListener("blur", function() {
@@ -164,4 +138,7 @@ for (let i = 0; i < 8; i++) {
     }
 }
 
-console.log(chess.ascii())
+// Listen for messages
+socket.addEventListener('message', (event) => {
+    console.log('Message from other client: ', event.data);
+});
